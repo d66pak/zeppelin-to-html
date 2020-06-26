@@ -43,12 +43,17 @@ def para2Html(formatter, d_para):
     html = []
     if d_para['text']:
         lang = d_para.get('config', {}).get('editorSetting', {}).get('language', 'text')
+        l_d_msg = d_para.get('results', {}).get('msg', [])
         if lang == 'markdown':
-            html.extend([d_msg['data'] for d_msg in d_para.get('results', {}).get('msg', '')])
+            html.extend([d_msg['data'] for d_msg in l_d_msg])
         else:
             html.append(highlight(d_para['text'], get_lexer_by_name(lang, stripall=True), formatter))
-            for data in filter(None, map(lambda d_msg: d_msg['data'], d_para.get('results', {}).get('msg', ''))):
-                html.append(highlight(data, PythonConsoleLexer(), formatter))
+            for (data, data_type) in map(lambda d_msg: (d_msg['data'], d_msg['type']), l_d_msg):
+                if data:
+                    if data_type == 'HTML':
+                        html.append(data)
+                    else:
+                        html.append(highlight(data, PythonConsoleLexer(), formatter))
     return html
 
 
