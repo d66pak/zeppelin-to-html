@@ -40,9 +40,9 @@ def convert(zeppelin_file, style):
 
 
 def para2Html(formatter, d_para):
-    lang = d_para['config']['editorSetting']['language']
     html = []
     if d_para['text']:
+        lang = d_para.get('config', {}).get('editorSetting', {}).get('language', 'text')
         if lang == 'markdown':
             html.extend([d_msg['data'] for d_msg in d_para.get('results', {}).get('msg', '')])
         else:
